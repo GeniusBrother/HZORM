@@ -1,0 +1,496 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		31CF0AEB911A9D49858D571A2C95BA64 /* Pods-HZORM-Example-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AC6CDCA7CA2A166987AF7C5177A86FE /* Pods-HZORM-Example-dummy.m */; };
+		41D28F22A6CF83D6AC8A98D5450C4EAD /* NSObject+HZORM.m in Sources */ = {isa = PBXBuildFile; fileRef = 69FC73D3A932D9E5612D5FE6BD10277B /* NSObject+HZORM.m */; };
+		43CA790060444A3D579C9CE404B7873F /* HZDatabaseManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 35BF8A8118DAFFA31457E7EE6CFD98CD /* HZDatabaseManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		82335644A08BCBC44216189F954085DF /* NSObject+HZORM.h in Headers */ = {isa = PBXBuildFile; fileRef = 56E4DDFB8126DEDE3D6281B063DA3CF5 /* NSObject+HZORM.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		C05EAB40B2153B229636F480E7F90B58 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CBB3DE36805AF21409EC968A9691732F /* Foundation.framework */; };
+		C15FB13FE1EC364061789DB53B58DB8F /* HZDatabaseManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 6DF1055521186F1F258234A0C5CB34A2 /* HZDatabaseManager.m */; };
+		DBED9B2DB69B343F953914CBFB41594C /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CBB3DE36805AF21409EC968A9691732F /* Foundation.framework */; };
+		F44EF9B6A00782709DA8312BD988C69F /* HZORM-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = A42AC2E9C1659C31583F4E0188044836 /* HZORM-dummy.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		0A4B1E50A27A47AF93A17091060867C6 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D41D8CD98F00B204E9800998ECF8427E /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4CD73552893E4F00B6C754D114DEE7BA;
+			remoteInfo = HZORM;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		128678002FB0D1FE08E029BE97FCA744 /* HZORM.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = HZORM.xcconfig; sourceTree = "<group>"; };
+		1785D5A5234F853330F232DBED6830F5 /* Pods-HZORM-Example-acknowledgements.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-HZORM-Example-acknowledgements.plist"; sourceTree = "<group>"; };
+		35BF8A8118DAFFA31457E7EE6CFD98CD /* HZDatabaseManager.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = HZDatabaseManager.h; sourceTree = "<group>"; };
+		3F881210AD43AFC630EED9F21A8A5373 /* Pods-HZORM-Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-HZORM-Example.debug.xcconfig"; sourceTree = "<group>"; };
+		506E368CAC94322910D60142EFB480A4 /* libPods-HZORM-Example.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; name = "libPods-HZORM-Example.a"; path = "libPods-HZORM-Example.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		56E4DDFB8126DEDE3D6281B063DA3CF5 /* NSObject+HZORM.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "NSObject+HZORM.h"; sourceTree = "<group>"; };
+		69FC73D3A932D9E5612D5FE6BD10277B /* NSObject+HZORM.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "NSObject+HZORM.m"; sourceTree = "<group>"; };
+		6DF1055521186F1F258234A0C5CB34A2 /* HZDatabaseManager.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = HZDatabaseManager.m; sourceTree = "<group>"; };
+		75B87DDFCDAED1101351B5A2342D56F8 /* Pods-HZORM-Example-acknowledgements.markdown */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = "Pods-HZORM-Example-acknowledgements.markdown"; sourceTree = "<group>"; };
+		8AC6CDCA7CA2A166987AF7C5177A86FE /* Pods-HZORM-Example-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Pods-HZORM-Example-dummy.m"; sourceTree = "<group>"; };
+		93A4A3777CF96A4AAC1D13BA6DCCEA73 /* Podfile */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; lastKnownFileType = text; name = Podfile; path = ../Podfile; sourceTree = SOURCE_ROOT; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
+		9DAAB1D36A0F854E79E533A00A7AB18E /* libHZORM.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; name = libHZORM.a; path = libHZORM.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		A42AC2E9C1659C31583F4E0188044836 /* HZORM-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "HZORM-dummy.m"; sourceTree = "<group>"; };
+		A57E5EBE392BD742AE941D7C69F187F7 /* HZORM-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "HZORM-prefix.pch"; sourceTree = "<group>"; };
+		C418BD016BD91E78CEB30C9BAF134B9F /* Pods-HZORM-Example-resources.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-HZORM-Example-resources.sh"; sourceTree = "<group>"; };
+		CBB3DE36805AF21409EC968A9691732F /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS10.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
+		E14DF1B6058CDD0976A11EA7934AC5D8 /* Pods-HZORM-Example-frameworks.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-HZORM-Example-frameworks.sh"; sourceTree = "<group>"; };
+		F5005003279A4D8B73B1C13F2004D3D8 /* Pods-HZORM-Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-HZORM-Example.release.xcconfig"; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		92EC4D86C0374BA0482F04FFC3FBC413 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DBED9B2DB69B343F953914CBFB41594C /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C44808C4C3024E04906FAB531E603603 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C05EAB40B2153B229636F480E7F90B58 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		1265032BB894511624263C725621C5FE /* Classes */ = {
+			isa = PBXGroup;
+			children = (
+				35BF8A8118DAFFA31457E7EE6CFD98CD /* HZDatabaseManager.h */,
+				6DF1055521186F1F258234A0C5CB34A2 /* HZDatabaseManager.m */,
+				56E4DDFB8126DEDE3D6281B063DA3CF5 /* NSObject+HZORM.h */,
+				69FC73D3A932D9E5612D5FE6BD10277B /* NSObject+HZORM.m */,
+			);
+			name = Classes;
+			path = Classes;
+			sourceTree = "<group>";
+		};
+		723A832CCB6E41D39C749ADDF7D0BD81 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				9DAAB1D36A0F854E79E533A00A7AB18E /* libHZORM.a */,
+				506E368CAC94322910D60142EFB480A4 /* libPods-HZORM-Example.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		7531C8F8DE19F1AA3C8A7AC97A91DC29 /* iOS */ = {
+			isa = PBXGroup;
+			children = (
+				CBB3DE36805AF21409EC968A9691732F /* Foundation.framework */,
+			);
+			name = iOS;
+			sourceTree = "<group>";
+		};
+		7DB346D0F39D3F0E887471402A8071AB = {
+			isa = PBXGroup;
+			children = (
+				93A4A3777CF96A4AAC1D13BA6DCCEA73 /* Podfile */,
+				8C2C0502962644F9DF49E2B67E6E3CAE /* Development Pods */,
+				BC3CA7F9E30CC8F7E2DD044DD34432FC /* Frameworks */,
+				723A832CCB6E41D39C749ADDF7D0BD81 /* Products */,
+				9C38D0BEA7C32A2AE48F544776C1B471 /* Targets Support Files */,
+			);
+			sourceTree = "<group>";
+		};
+		8C2C0502962644F9DF49E2B67E6E3CAE /* Development Pods */ = {
+			isa = PBXGroup;
+			children = (
+				F1202EB68651CFF607FB2468CFA4860D /* HZORM */,
+			);
+			name = "Development Pods";
+			sourceTree = "<group>";
+		};
+		9C38D0BEA7C32A2AE48F544776C1B471 /* Targets Support Files */ = {
+			isa = PBXGroup;
+			children = (
+				D959393EEDC30027A3B93528A757AC11 /* Pods-HZORM-Example */,
+			);
+			name = "Targets Support Files";
+			sourceTree = "<group>";
+		};
+		BA3D223FE8BA95789A8652A9E4112538 /* Support Files */ = {
+			isa = PBXGroup;
+			children = (
+				128678002FB0D1FE08E029BE97FCA744 /* HZORM.xcconfig */,
+				A42AC2E9C1659C31583F4E0188044836 /* HZORM-dummy.m */,
+				A57E5EBE392BD742AE941D7C69F187F7 /* HZORM-prefix.pch */,
+			);
+			name = "Support Files";
+			path = "Example/Pods/Target Support Files/HZORM";
+			sourceTree = "<group>";
+		};
+		BC3CA7F9E30CC8F7E2DD044DD34432FC /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				7531C8F8DE19F1AA3C8A7AC97A91DC29 /* iOS */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		D959393EEDC30027A3B93528A757AC11 /* Pods-HZORM-Example */ = {
+			isa = PBXGroup;
+			children = (
+				75B87DDFCDAED1101351B5A2342D56F8 /* Pods-HZORM-Example-acknowledgements.markdown */,
+				1785D5A5234F853330F232DBED6830F5 /* Pods-HZORM-Example-acknowledgements.plist */,
+				8AC6CDCA7CA2A166987AF7C5177A86FE /* Pods-HZORM-Example-dummy.m */,
+				E14DF1B6058CDD0976A11EA7934AC5D8 /* Pods-HZORM-Example-frameworks.sh */,
+				C418BD016BD91E78CEB30C9BAF134B9F /* Pods-HZORM-Example-resources.sh */,
+				3F881210AD43AFC630EED9F21A8A5373 /* Pods-HZORM-Example.debug.xcconfig */,
+				F5005003279A4D8B73B1C13F2004D3D8 /* Pods-HZORM-Example.release.xcconfig */,
+			);
+			name = "Pods-HZORM-Example";
+			path = "Target Support Files/Pods-HZORM-Example";
+			sourceTree = "<group>";
+		};
+		EB339C73F0D2A5604B169905BFB3A210 /* HZORM */ = {
+			isa = PBXGroup;
+			children = (
+				1265032BB894511624263C725621C5FE /* Classes */,
+			);
+			name = HZORM;
+			path = HZORM;
+			sourceTree = "<group>";
+		};
+		F1202EB68651CFF607FB2468CFA4860D /* HZORM */ = {
+			isa = PBXGroup;
+			children = (
+				EB339C73F0D2A5604B169905BFB3A210 /* HZORM */,
+				BA3D223FE8BA95789A8652A9E4112538 /* Support Files */,
+			);
+			name = HZORM;
+			path = ../..;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		2659B34244F962227C9C7F3AF0935910 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				43CA790060444A3D579C9CE404B7873F /* HZDatabaseManager.h in Headers */,
+				82335644A08BCBC44216189F954085DF /* NSObject+HZORM.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		4CD73552893E4F00B6C754D114DEE7BA /* HZORM */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 2915246DA6C42C8EE42B8713E4AFC580 /* Build configuration list for PBXNativeTarget "HZORM" */;
+			buildPhases = (
+				23B3FFB5916D9CB3DADCE8832CB96D1B /* Sources */,
+				C44808C4C3024E04906FAB531E603603 /* Frameworks */,
+				2659B34244F962227C9C7F3AF0935910 /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = HZORM;
+			productName = HZORM;
+			productReference = 9DAAB1D36A0F854E79E533A00A7AB18E /* libHZORM.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+		EB9C1DDBD5B2B522E9D99E993A9326DE /* Pods-HZORM-Example */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 8C723A8FC13DEA954F882E1A2A8ECE2B /* Build configuration list for PBXNativeTarget "Pods-HZORM-Example" */;
+			buildPhases = (
+				D26916AC4858B2F49B8BB7CFAE968A82 /* Sources */,
+				92EC4D86C0374BA0482F04FFC3FBC413 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				A2DD0DFD3291433DFF805A38A47F7B9D /* PBXTargetDependency */,
+			);
+			name = "Pods-HZORM-Example";
+			productName = "Pods-HZORM-Example";
+			productReference = 506E368CAC94322910D60142EFB480A4 /* libPods-HZORM-Example.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		D41D8CD98F00B204E9800998ECF8427E /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 0730;
+				LastUpgradeCheck = 0700;
+			};
+			buildConfigurationList = 2D8E8EC45A3A1A1D94AE762CB5028504 /* Build configuration list for PBXProject "Pods" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 7DB346D0F39D3F0E887471402A8071AB;
+			productRefGroup = 723A832CCB6E41D39C749ADDF7D0BD81 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				4CD73552893E4F00B6C754D114DEE7BA /* HZORM */,
+				EB9C1DDBD5B2B522E9D99E993A9326DE /* Pods-HZORM-Example */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		23B3FFB5916D9CB3DADCE8832CB96D1B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C15FB13FE1EC364061789DB53B58DB8F /* HZDatabaseManager.m in Sources */,
+				F44EF9B6A00782709DA8312BD988C69F /* HZORM-dummy.m in Sources */,
+				41D28F22A6CF83D6AC8A98D5450C4EAD /* NSObject+HZORM.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D26916AC4858B2F49B8BB7CFAE968A82 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				31CF0AEB911A9D49858D571A2C95BA64 /* Pods-HZORM-Example-dummy.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		A2DD0DFD3291433DFF805A38A47F7B9D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = HZORM;
+			target = 4CD73552893E4F00B6C754D114DEE7BA /* HZORM */;
+			targetProxy = 0A4B1E50A27A47AF93A17091060867C6 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		156284431C64CB05C59BDA0595A1E95A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGNING_REQUIRED = NO;
+				COPY_PHASE_STRIP = YES;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"POD_CONFIGURATION_RELEASE=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
+				PROVISIONING_PROFILE_SPECIFIER = NO_SIGNING/;
+				STRIP_INSTALLED_PRODUCT = NO;
+				SYMROOT = "${SRCROOT}/../build";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		7D0157B9030654B8555E11C1D91A6F12 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 128678002FB0D1FE08E029BE97FCA744 /* HZORM.xcconfig */;
+			buildSettings = {
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREFIX_HEADER = "Target Support Files/HZORM/HZORM-prefix.pch";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PRIVATE_HEADERS_FOLDER_PATH = "";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PUBLIC_HEADERS_FOLDER_PATH = "";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
+		9A0618331DE416FD092AA9873A51B014 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 3F881210AD43AFC630EED9F21A8A5373 /* Pods-HZORM-Example.debug.xcconfig */;
+			buildSettings = {
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
+				MACH_O_TYPE = staticlib;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PODS_ROOT = "$(SRCROOT)";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.${PRODUCT_NAME:rfc1034identifier}";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		C382132BB6BF8CA1A911872A2062FD0D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGNING_REQUIRED = NO;
+				COPY_PHASE_STRIP = NO;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"POD_CONFIGURATION_DEBUG=1",
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
+				ONLY_ACTIVE_ARCH = YES;
+				PROVISIONING_PROFILE_SPECIFIER = NO_SIGNING/;
+				STRIP_INSTALLED_PRODUCT = NO;
+				SYMROOT = "${SRCROOT}/../build";
+			};
+			name = Debug;
+		};
+		E15CB532DC17E4A449A27090E35479B3 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = F5005003279A4D8B73B1C13F2004D3D8 /* Pods-HZORM-Example.release.xcconfig */;
+			buildSettings = {
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
+				MACH_O_TYPE = staticlib;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PODS_ROOT = "$(SRCROOT)";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.${PRODUCT_NAME:rfc1034identifier}";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
+		E3CDEA598CDA323C73E3B3EA17EC78F0 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 128678002FB0D1FE08E029BE97FCA744 /* HZORM.xcconfig */;
+			buildSettings = {
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREFIX_HEADER = "Target Support Files/HZORM/HZORM-prefix.pch";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PRIVATE_HEADERS_FOLDER_PATH = "";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PUBLIC_HEADERS_FOLDER_PATH = "";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		2915246DA6C42C8EE42B8713E4AFC580 /* Build configuration list for PBXNativeTarget "HZORM" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E3CDEA598CDA323C73E3B3EA17EC78F0 /* Debug */,
+				7D0157B9030654B8555E11C1D91A6F12 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		2D8E8EC45A3A1A1D94AE762CB5028504 /* Build configuration list for PBXProject "Pods" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C382132BB6BF8CA1A911872A2062FD0D /* Debug */,
+				156284431C64CB05C59BDA0595A1E95A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		8C723A8FC13DEA954F882E1A2A8ECE2B /* Build configuration list for PBXNativeTarget "Pods-HZORM-Example" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9A0618331DE416FD092AA9873A51B014 /* Debug */,
+				E15CB532DC17E4A449A27090E35479B3 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = D41D8CD98F00B204E9800998ECF8427E /* Project object */;
+}
