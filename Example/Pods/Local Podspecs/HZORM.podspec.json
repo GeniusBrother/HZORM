@@ -17,5 +17,10 @@
   },
   "frameworks": "Foundation",
   "public_header_files": "HZORM/Classes/**/*.h",
-  "source_files": "HZORM/Classes/**/*.{h,m}"
+  "source_files": "HZORM/Classes/**/*.{h,m}",
+  "dependencies": {
+    "FMDB": [
+      "~>2.7.0"
+    ]
+  }
 }

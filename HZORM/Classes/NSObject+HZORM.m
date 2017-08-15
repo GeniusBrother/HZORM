@@ -7,13 +7,8 @@
 //
 
 #import "NSObject+HZORM.h"
-#import "HZMacro.h"
-#import "NSObject+HZExtend.h"
-#import "NSDictionary+HZExtend.h"
-#import "NSArray+HZExtend.h"
-
 #import <objc/runtime.h>
-#import "FMDB.h"
+#import <FMDB/FMDB.h>
 static const char kPrimaryKey = '\0';
 static const char kIsInDBKey = '\0';
 NSString *const kPrimaryKeyName = @"primaryKey";
@@ -36,47 +31,51 @@ NSString *const kPrimaryKeyName = @"primaryKey";
     NSMutableArray *values = [NSMutableArray array];
     
     for (NSString *propertyName in [[self class] getColumnNames].allValues) {
-        id value = [self workedValueForPropertyName:propertyName];
+        id value = [self validValueForProperty:propertyName];
         
         if (value != nil) {
             [values addObject:value];
-        } else {
+        }else {
             [values addObject:[NSNull null]];
         }
     }
     return values;
 }
 
-- (id)workedValueForPropertyName:(NSString *)name
+- (NSString *)jsonStringWithObject:(id)jsonObj
+{
+    NSError *error;
+    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:jsonObj options:0 error:&error];
+    if (error) return @"";
+    
+    return [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+}
+
+- (id)validValueForProperty:(NSString *)name
 {
     id originalValue = [self valueForKey:name];
     
     if (!originalValue) return [NSNull null];
     
-    if ([originalValue isKindOfClass:[NSArray class]]) {
-        return [(NSArray *)originalValue jsonString];
-    }else if ([originalValue isKindOfClass:[NSDictionary class]]) {
-        return [(NSDictionary *)originalValue jsonString];
-    }else {
-        
-        id obj = [originalValue mj_keyValues];
-        if ([obj isKindOfClass:[NSDictionary class]]) { //判断是否为模型类型
-            return [(NSDictionary *)obj jsonString];
-        }
+    if ([originalValue isKindOfClass:[NSArray class]] || [originalValue isKindOfClass:[NSDictionary class]]) {
+        return [self jsonStringWithObject:originalValue];
+    }else if([originalValue isKindOfClass:[NSString class]] || [originalValue isKindOfClass:[NSNumber class]]){
         return originalValue;
+    }else { //originalValue为其它对象类型
+        return @"";
     }
 }
 
 - (BOOL)insert
 {
     NSArray *columnsWithoutPK = [[self class] getColumnNames].allKeys;
-    if (!columnsWithoutPK.isNoEmpty) {
+    if (!([columnsWithoutPK isKindOfClass:[NSArray class]] && columnsWithoutPK.count > 0)) {
         NSAssert(NO, @"请实现getColumnNames 指定列名");
         return NO;
     }
     
     NSString *tableName = [[self class] getTabelName];
-    if (!tableName.isNoEmpty) {
+    if (!([tableName isKindOfClass:[NSString class]] && tableName.length > 0)) {
         NSAssert(NO, @"请实现getTabelName 指定表名");
         return NO;
     }
@@ -105,7 +104,7 @@ NSString *const kPrimaryKeyName = @"primaryKey";
 - (BOOL)updateSelf
 {
     NSDictionary *columnPropertyDic = [[self class] getColumnNames];
-    if (!columnPropertyDic.isNoEmpty) {
+    if (!([columnPropertyDic isKindOfClass:[NSDictionary class]] && columnPropertyDic.count > 0)) {
         NSAssert(NO, @"请实现getColumnNames 指定列名");
         return NO;
     }
@@ -116,7 +115,7 @@ NSString *const kPrimaryKeyName = @"primaryKey";
     __block NSMutableArray *parameters = [NSMutableArray arrayWithCapacity:columnPropertyDic.count];
     [columnPropertyDic enumerateKeysAndObjectsUsingBlock:^(NSString  *_Nonnull column, NSString  *_Nonnull property, BOOL * _Nonnull stop) {
         [setValues appendFormat:@"%@ = ?,",column];
-        id data = [self workedValueForPropertyName:property];
+        id data = [self validValueForProperty:property];
         if (data) [parameters addObject:data];
     }];
     [setValues deleteCharactersInRange:NSMakeRange(setValues.length - 1, 1)];
@@ -146,9 +145,11 @@ NSString *const kPrimaryKeyName = @"primaryKey";
 
 + (NSString *)whereStrWithKeys:(NSArray *)keys values:(NSArray *)values
 {
+    NSAssert(keys.count == values.count, @"key's count not equal value's count");
+    
     NSMutableString *str = [NSMutableString stringWithString:@"where "];
-    for (int i=0; i<[values count]; i++) {
-        NSString *key = [keys objectAtSafeIndex:i];
+    for (int i=0; i<[keys count]; i++) {
+        NSString *key = [keys objectAtIndex:i];
         [str appendFormat:@"%@=? AND ",key];
     }
     
@@ -160,7 +161,7 @@ NSString *const kPrimaryKeyName = @"primaryKey";
 #pragma mark - Public Method
 + (NSInteger)modelExistDBWithKeys:(NSArray<NSString *> *)keys values:(NSArray *)values
 {
-    if (!keys.isNoEmpty || !values) return NO;
+    if (!([keys isKindOfClass:[NSArray class]] && keys.count > 0) || !(values.count > 0)) return NO;
     
     NSMutableString *sql = [NSMutableString stringWithFormat:@"select primaryKey from %@ %@",[self getTabelName],[self whereStrWithKeys:keys values:values]];
     NSObject *obj = [[[self class] findWithSql:sql withParameters:values] firstObject];
@@ -197,7 +198,7 @@ NSString *const kPrimaryKeyName = @"primaryKey";
 
 + (BOOL)deleteWithKeys:(NSArray <NSString *> *)keys values:(NSArray *)values
 {
-    if (!keys.isNoEmpty || !values.isNoEmpty) return NO;
+    if (!([keys isKindOfClass:[NSArray class]] && keys.count > 0) || !([values isKindOfClass:[NSArray class]] && values.count > 0)) return NO;
     if ([HZDBManager open]) {
         NSString *sql = [NSString stringWithFormat:@"DELETE FROM %@ %@", [self getTabelName],[self whereStrWithKeys:keys values:values]];
         BOOL rs = [HZDBManager executeUpdate:sql withParams:values];
@@ -222,7 +223,7 @@ NSString *const kPrimaryKeyName = @"primaryKey";
 
 + (BOOL)saveArray:(NSArray *)modelArray
 {
-    if (!modelArray.isNoEmpty) return NO;
+    if (!([modelArray isKindOfClass:[NSArray class]] && modelArray.count > 0)) return NO;
     
     if ([HZDBManager open]) {
         [HZDBManager beginTransactionWithBlock:^BOOL(HZDatabaseManager * _Nonnull db) {
@@ -243,7 +244,7 @@ NSString *const kPrimaryKeyName = @"primaryKey";
 
 + (BOOL)deleteWithArray:(NSArray *)array
 {
-    if (!array.isNoEmpty) return NO;
+    if (!([array isKindOfClass:[NSArray class]] && array.count > 0)) return NO;
     
     if ([HZDBManager open]) {
         NSMutableString *collection = [NSMutableString stringWithString:@"("];
@@ -291,7 +292,7 @@ NSString *const kPrimaryKeyName = @"primaryKey";
                     [obj setValue:value forKey:columnName];
                 }else {
                     NSString *propertyName = [columnPropertyDic objectForKey:columnName];
-                    if (propertyName.isNoEmpty) {
+                    if ([propertyName isKindOfClass:[NSString class]] && propertyName.length > 0) {
                         id convertedValue =  [self getNewValueForProperty:propertyName withOriginValue:value];
                         NSAssert(convertedValue, @"HZORM 装换的值不能为nil");
                         if (convertedValue && ![convertedValue isKindOfClass:[NSNull class]]) [obj setValue:convertedValue forKey:propertyName];
@@ -312,7 +313,7 @@ NSString *const kPrimaryKeyName = @"primaryKey";
 
 + (NSArray *)findByColumns:(NSArray *)columns values:(NSArray *)values
 {
-    if (!columns.isNoEmpty || !values.isNoEmpty) return nil;
+    if (!columns || !values) return nil;
     
     NSMutableString *sql = [NSMutableString stringWithFormat:@"select * from %@ %@",[self getTabelName],[self whereStrWithKeys:columns values:values]];
 
@@ -334,13 +335,7 @@ NSString *const kPrimaryKeyName = @"primaryKey";
 - (void)sucessDelete {}
 
 #pragma mark - Override
-+ (NSString *)getTabelName { return @"";}
 
-+ (NSDictionary *)getColumnNames { return nil; }
-
-+ (id)getNewValueForProperty:(NSString *)name withOriginValue:(id)originValue { return originValue; }
-
-+ (NSArray *)getUniqueKeys { return nil; }
 
 #pragma mark - Property
 - (BOOL)isInDB
@@ -348,7 +343,7 @@ NSString *const kPrimaryKeyName = @"primaryKey";
     NSNumber *isInDB = objc_getAssociatedObject(self, &kIsInDBKey);
     if (!isInDB) {
         NSArray *keys = [[self class] getUniqueKeys];
-        if (keys.isNoEmpty) {
+        if (keys.count > 0) {
             NSMutableArray *values = [NSMutableArray arrayWithCapacity:keys.count];
             NSDictionary *columnPropertDic = [[self class] getColumnNames];
             [keys enumerateObjectsUsingBlock:^(NSString  *_Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {

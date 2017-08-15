@@ -8,7 +8,7 @@
 /****************     操作和管理APP数据库     ****************/
 
 #import <Foundation/Foundation.h>
-#import "HZSingleton.h"
+
 
 #define HZDBManager [HZDatabaseManager sharedManager]
 
@@ -18,7 +18,9 @@ typedef int(^HZDBExecuteStatementsCallbackBlock)(NSDictionary *resultsDictionary
 
 
 @interface HZDatabaseManager : NSObject
-singleton_h(Manager)
+
++ (instancetype)sharedManager;
+
 
 /** 数据库存放路径 */
 @property(nonatomic, copy, nullable) NSString *dbPath;

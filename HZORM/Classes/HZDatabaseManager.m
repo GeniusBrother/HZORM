@@ -8,8 +8,7 @@
 
 #import "HZDatabaseManager.h"
 #import <FMDB/FMDB.h>
-#import "NSObject+HZExtend.h"
-#import "HZMacro.h"
+
 #import "sqlite3.h"
 @interface HZDatabaseManager ()
 
@@ -19,7 +18,20 @@
 
 @implementation HZDatabaseManager
 #pragma mark - Initialization
-singleton_m
+static id _instance;
++ (id)allocWithZone:(struct _NSZone *)zone
+{
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        _instance = [super allocWithZone:zone];
+    });
+    return _instance;
+}
+
++ (id)copyWithZone:(struct _NSZone *)zone
+{
+    return _instance;
+}
 
 + (instancetype)sharedManager
 {
@@ -46,7 +58,7 @@ singleton_m
 {
     _shouldControlConnection = YES;
     
-    [HZNotificationCenter addObserver:self selector:@selector(applicationDidEnterBackground:) name:UIApplicationDidEnterBackgroundNotification object:nil];
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(applicationDidEnterBackground:) name:UIApplicationDidEnterBackgroundNotification object:nil];
 }
 
 #pragma mark - Private Method
@@ -67,7 +79,7 @@ singleton_m
 #pragma mark - Public Method
 - (BOOL)open
 {
-    NSAssert(self.dbPath.isNoEmpty, @"请先设置db path ");
+    NSAssert(self.dbPath, @"请先设置db path ");
     
     return [self.database open];
 }
@@ -83,21 +95,24 @@ singleton_m
 {
     [self checkConnection];
     
-    if (!sql.isNoEmpty) {
+    if (!([sql isKindOfClass:[NSString class]] && sql.length > 0)) {
         NSAssert(NO, @"%s SQL语句为空",__FUNCTION__);
         return NO;
     }
     
     BOOL result = NO;
-    if (data.isNoEmpty) {
+    if ([data isKindOfClass:[NSArray class]] && data.count > 0) {
         result = [self.database executeUpdate:sql withArgumentsInArray:data];
     }else {
         result = [self.database executeUpdate:sql];
     }
     
+#if DEBUG
     if (!result) {
-        HZLog(@"update 失败 错误信息-----%@",self.database.lastErrorMessage);
+        NSLog(@"update 失败 错误信息-----%@",self.database.lastErrorMessage);
     }
+#endif
+    
     return result;
 }
 
@@ -105,27 +120,30 @@ singleton_m
 {
     [self checkConnection];
     
-    if (!sql.isNoEmpty) {
+    if (!([sql isKindOfClass:[NSString class]] && sql.length > 0)) {
         NSAssert(NO, @"%s SQL语句为空",__FUNCTION__);
         return nil;
     }
     
     FMResultSet *rs = nil;
     NSMutableArray *array = [NSMutableArray array];
-    if (data.isNoEmpty) {
+    if ([data isKindOfClass:[NSArray class]] && data.count > 0) {
         rs = [self.database executeQuery:sql withArgumentsInArray:data];
     }else {
         rs = [self.database executeQuery:sql];
     }
     
+#if DEBUG
     if (!rs) {
-        HZLog(@"sql 查询失败:%@",self.database.lastErrorMessage);
+        NSLog(@"sql 查询失败:%@",self.database.lastErrorMessage);
         return nil;
     }
+#endif
     
+
     while ([rs next]) {
         NSMutableDictionary *dic = (NSMutableDictionary *)rs.resultDictionary;
-        if (dic.isNoEmpty) [array addObject:dic];
+        if (dic) [array addObject:dic];
     }
     [rs close];
     
@@ -135,7 +153,7 @@ singleton_m
 - (BOOL)executeStatements:(NSString *)sql withResultBlock:(HZDBExecuteStatementsCallbackBlock)block
 {
     [self checkConnection];
-    if (!sql.isNoEmpty) {
+    if (!([sql isKindOfClass:[NSString class]] && sql.length > 0)) {
         NSAssert(NO, @"%s SQL语句为空",__FUNCTION__);
         return NO;
     }
@@ -161,7 +179,7 @@ singleton_m
 {
     [self checkConnection];
     
-    if (!sql.isNoEmpty) {
+    if (!([sql isKindOfClass:[NSString class]] && sql.length > 0)) {
         NSAssert(NO, @"%s SQL语句为空",__FUNCTION__);
         return MAXFLOAT;
     }
@@ -173,7 +191,7 @@ singleton_m
 {
     [self checkConnection];
     
-    if (!sql.isNoEmpty) {
+    if (!([sql isKindOfClass:[NSString class]] && sql.length > 0)) {
         NSAssert(NO, @"%s SQL语句为空",__FUNCTION__);
         return NSNotFound;
     }
@@ -197,7 +215,7 @@ singleton_m
 #pragma mark - Setter
 - (void)setDbPath:(NSString *)dbPath
 {
-    if (dbPath.isNoEmpty && ![dbPath isEqualToString:_dbPath]) {
+    if (!([dbPath isKindOfClass:[NSString class]] && dbPath.length > 0) && ![dbPath isEqualToString:_dbPath]) {
         [self.database close];
         
         NSString *directory = [dbPath stringByDeletingLastPathComponent];

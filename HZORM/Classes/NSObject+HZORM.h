@@ -24,14 +24,6 @@ extern NSString *const kPrimaryKeyName;
 @property(nonatomic, assign, readonly) NSUInteger primaryKey;
 
 #pragma mark - Initialization
-/**
- *	创建模型
- *
- *	@param dic  json数据
- *
- *  @return 模型
- */
-+ (instancetype)modelWithDic:(NSDictionary<NSString *, id> *)dic;
 
 /**
  *	从数据库加载模型
@@ -116,7 +108,6 @@ extern NSString *const kPrimaryKeyName;
  */
 + (nullable NSArray *)findAll;
 
-
 #pragma mark - CallBack
 /**
  *  向数据库插入数据之前调用
@@ -148,33 +139,6 @@ extern NSString *const kPrimaryKeyName;
  */
 - (void)sucessDelete;
 
-#pragma mark - Override
-//子类重写该方法来返回相应的数据
-/**
- *  子类实现该方法来返回表名
- */
-+ (NSString *)getTabelName;
-
-/**
- *  子类实现该方法来返回列名属性的映射关系
- */
-+ (NSDictionary<NSString *, NSString *> *)getColumnNames;
-
-/**
- *  子类实现该方法来返回标识数据唯一性的列名
- */
-+ (NSArray *)getUniqueKeys;
-
-/**
- *	子类实现该方法对数据库值进行处理,然后在将新值赋给属性
- *  默认实现为返回原值
- *
- *	@param name 属性名
- *  @param originValue  原始数据库值
- *
- *  @return id,处理后的新值
- */
-+ (id)getNewValueForProperty:(NSString *)name withOriginValue:(id)originValue;
 
 
 @end
