@@ -20,6 +20,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (BOOL)isIncrementing;
 
++ (NSDictionary<NSString *, NSString *> *)getCasts;
+
 /**
  *	子类实现该方法对数据库值进行处理,然后在将新值赋给属性
  *  默认实现为返回原值

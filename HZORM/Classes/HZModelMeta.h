@@ -8,14 +8,23 @@
 
 #import <Foundation/Foundation.h>
 
+/**
+ 存储ORM模型元数据
+ */
 @interface HZModelMeta : NSObject
 
-@property(nonatomic, copy, readonly) NSString *tableName;
+- (instancetype)initWithClass:(Class)cla;
 
-@property(nonatomic, copy, readonly) NSDictionary<NSString *, NSString *> *columnMap;
+@property(nonatomic, readonly) Class cla;
 
-@property(nonatomic, copy, readonly) NSArray<NSString *> *primaryKeys;
+@property(nonatomic, readonly) NSString *tableName;
 
-@property(nonatomic, assign, readonly) BOOL incrementing;
+@property(nonatomic, readonly) NSDictionary<NSString *, NSString *> *casts;
+
+@property(nonatomic, readonly) NSDictionary<NSString *, NSString *> *columnMap;
+
+@property(nonatomic, readonly) NSArray<NSString *> *primaryKeys;
+
+@property(nonatomic, readonly) BOOL incrementing;
 
 @end

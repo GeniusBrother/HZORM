@@ -7,12 +7,12 @@
 //
 
 #import <Foundation/Foundation.h>
-
+@class HZModelMeta;
 NS_ASSUME_NONNULL_BEGIN
 
 @interface HZQueryBuilder : NSObject
 
-+ (instancetype)queryBuilderWithTable:(NSString *)tableName;
++ (instancetype)queryBuilderWithMeta:(HZModelMeta *)meta;
 
 - (HZQueryBuilder *)select:(NSArray<NSString *> *)columns;
 

@@ -10,6 +10,8 @@
 
 #import <Foundation/Foundation.h>
 #import "HZDatabaseManager.h"
+#import "HZQueryBuilder.h"
+@class HZModelMeta;
 #define PROPERTY_NANME_FOR_PROPERTY(PROPERTY) NSStringFromSelector(@selector(PROPERTY))
 
 NS_ASSUME_NONNULL_BEGIN
@@ -59,22 +61,20 @@ extern NSString *const kPrimaryKeyName;
  */
 - (BOOL)save;
 
+- (BOOL)update;
+
 /**
  *  从数据库删除自身这条数据
  */
-- (BOOL)delete;
+- (BOOL)remove;
 
 /**
  *	从数据库删除该表下的全部数据
  */
-+ (BOOL)deleteAll;
++ (BOOL)remove;
 
-+ (BOOL)saveArray:(NSArray *)modelArray;
++ (BOOL)insert:(NSArray *)models;
 
-/**
- *  删除数组中的全部元组
- */
-+ (BOOL)deleteWithArray:(NSArray *)array;
 
 /**
  *  根据值删除元组
@@ -100,6 +100,13 @@ extern NSString *const kPrimaryKeyName;
  *  @return 数据模型数组,无结果返回nil
  */
 + (nullable NSArray *)findWithSql:(NSString *)sql withParameters:(nullable NSArray *)parameters;
+
++ (nullable NSArray *)findWithSql:(NSString *)sql withMeta:(HZModelMeta *)meta;
+
+
++ (HZQueryBuilder *)search:(NSArray *)columns;
+
++ (HZQueryBuilder *)searchRaw:(NSString *)raw;
 
 /**
  *	查找该表下的所有数据模型

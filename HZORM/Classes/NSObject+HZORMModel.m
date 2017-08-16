@@ -10,4 +10,17 @@
 
 @implementation NSObject (HZORMModel)
 
++ (NSString *)getTabelName { return @"";}
+
++ (NSDictionary<NSString *,NSString *> *)getColumnMap { return @{@"id":@"id"}; }
+
++ (NSArray<NSString *> *)getPrimaryKeys { return @[@"id"]; }
+
++ (NSDictionary<NSString *,NSString *> *)getCasts { return @{}; }
+
++ (BOOL)isIncrementing { return YES; }
+
++ (id)getNewValueForProperty:(NSString *)name withOriginValue:(id)originValue { return originValue; }
+
+
 @end
