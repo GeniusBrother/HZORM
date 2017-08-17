@@ -29,7 +29,7 @@ typedef int(^HZDBExecuteStatementsCallbackBlock)(NSDictionary *resultsDictionary
  *  是否由receiver来管理连接
  *  默认为YES,在app活跃的生命周期则会一直保持连接,进入后台后会释放连接
  */
-@property(nonatomic, assign) BOOL shouldControlConnection;
+@property(nonatomic, assign) BOOL autoControlConnection;
 
 /**
  * 打开数据库

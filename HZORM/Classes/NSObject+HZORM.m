@@ -28,21 +28,7 @@ NSString *const kPrimaryKeyName = @"primaryKey";
 }
 
 #pragma mark - Private Method
-//- (NSArray *)propertyValues
-//{
-//    NSMutableArray *values = [NSMutableArray array];
-//    
-//    for (NSString *propertyName in [[self class] getColumnNames].allValues) {
-//        id value = [self validValueForProperty:propertyName];
-//        
-//        if (value != nil) {
-//            [values addObject:value];
-//        }else {
-//            [values addObject:[NSNull null]];
-//        }
-//    }
-//    return values;
-//}
+
 
 + (NSString *)jsonStringWithObject:(id)jsonObj
 {
@@ -58,7 +44,8 @@ NSString *const kPrimaryKeyName = @"primaryKey";
     return [NSJSONSerialization JSONObjectWithData:[jsonStr dataUsingEncoding:NSUTF8StringEncoding] options:kNilOptions error:nil];
 }
 
-- (id)validValueForProperty:(NSString *)name
+//将属性值转化成适合数据存储的值
+- (id)validDBValueForProperty:(NSString *)name
 {
     id originalValue = [self valueForKey:name];
     
@@ -73,82 +60,143 @@ NSString *const kPrimaryKeyName = @"primaryKey";
     }
 }
 
-//- (BOOL)insert
-//{
-//    NSArray *columnsWithoutPK = [[self class] getColumnNames].allKeys;
-//    if (!([columnsWithoutPK isKindOfClass:[NSArray class]] && columnsWithoutPK.count > 0)) {
-//        NSAssert(NO, @"请实现getColumnNames 指定列名");
-//        return NO;
-//    }
-//    
-//    NSString *tableName = [[self class] getTabelName];
-//    if (!([tableName isKindOfClass:[NSString class]] && tableName.length > 0)) {
-//        NSAssert(NO, @"请实现getTabelName 指定表名");
-//        return NO;
-//    }
-//    
-//    [self beforeInsert];
-//    
-//    NSMutableArray *parameterList = [NSMutableArray arrayWithCapacity:columnsWithoutPK.count];
-//    for (int i=0; i<[columnsWithoutPK count]; i++) {
-//        [parameterList addObject:@"?"]; //@[?,?];
-//    }
-//    
-//    //将2个数组拼接成字符串,并组合成sql
-//    NSString *sql = [NSString stringWithFormat:@"INSERT INTO %@ (%@) values(%@)", tableName, [columnsWithoutPK componentsJoinedByString:@","], [parameterList componentsJoinedByString:@","]];
-//    
-//    if ([HZDBManager executeUpdate:sql withParams:[self propertyValues]]) {
-//        self.isInDB = YES;
-//        self.primaryKey = [HZDBManager lastInsertRowId];
-//        
-//        [self sucessInsert];
-//        return YES;
-//    }
-//    
-//    return NO;
-//}
-//
-//- (BOOL)updateSelf
-//{
-//    NSDictionary *columnPropertyDic = [[self class] getColumnNames];
-//    if (!([columnPropertyDic isKindOfClass:[NSDictionary class]] && columnPropertyDic.count > 0)) {
-//        NSAssert(NO, @"请实现getColumnNames 指定列名");
-//        return NO;
-//    }
-//    
-//    [self beforeUpdate];
-//    
-//    __block NSMutableString *setValues = [NSMutableString string];
-//    __block NSMutableArray *parameters = [NSMutableArray arrayWithCapacity:columnPropertyDic.count];
-//    [columnPropertyDic enumerateKeysAndObjectsUsingBlock:^(NSString  *_Nonnull column, NSString  *_Nonnull property, BOOL * _Nonnull stop) {
-//        [setValues appendFormat:@"%@ = ?,",column];
-//        id data = [self validValueForProperty:property];
-//        if (data) [parameters addObject:data];
-//    }];
-//    [setValues deleteCharactersInRange:NSMakeRange(setValues.length - 1, 1)];
-//    [parameters addObject:@(self.primaryKey)];
-//    
-//    NSString *sql = [NSString stringWithFormat:@"UPDATE %@ SET %@ WHERE primaryKey = ?", [[self class] getTabelName], setValues];
-//    if ([HZDBManager executeUpdate:sql withParams:parameters]) {
-//        
-//        [self sucessUpdate];
-//        return YES;
-//    }
-//    return NO;
-//}
-//
-//- (BOOL)deleteSelf
-//{
-//    NSString *sql = [NSString stringWithFormat:@"DELETE FROM %@ WHERE primaryKey = ?", [[self class]getTabelName]];
-//    if ([HZDBManager executeUpdate:sql withParams:@[@(self.primaryKey)]]) {
-//        self.isInDB = NO;
-//        self.primaryKey = 0;
-//        
-//        return YES;
-//    }
-//    
-//    return NO;
-//}
+- (NSArray *)validDBValuesForPropertys:(NSArray *)propertyNames;
+{
+    if (!(propertyNames.count > 0)) return nil;
+    
+    NSMutableArray *values = [NSMutableArray array];
+    
+    for (NSString *propertyName in propertyNames) {
+        id value = [self validDBValueForProperty:propertyName];
+        [values addObject:value];
+    }
+    return values;
+}
+
+
+- (BOOL)existInDB
+{
+    HZModelMeta *meta = [self meta];
+    NSString *tableName = meta.tableName;
+    
+    if ([HZDBManager open]) {
+    
+        NSInteger count = [HZDBManager longForQuery:[NSString stringWithFormat:@"select count(*) from %@ where %@",tableName, [self wherePKWithMeta:meta]]];
+        [HZDBManager close];
+        
+        return count;
+    }
+    
+    return NO;
+}
+
+
+- (HZModelMeta *)meta
+{
+    return [[HZModelMeta alloc] initWithClass:[self class]];
+}
+
+- (BOOL)insert
+{
+    //get table structure.
+    HZModelMeta *meta = [self meta];
+    NSArray *columns = meta.columnMap.allKeys;
+    NSString *tableName = meta.tableName;
+    BOOL incrementing = meta.incrementing;
+    if (incrementing) {
+        NSString *primaryKey = [meta.primaryKeys firstObject];
+        NSMutableArray *columnsWithoutPK = [NSMutableArray arrayWithArray:columns];
+        [columnsWithoutPK removeObject:primaryKey];
+        columns = columnsWithoutPK;
+    }
+    
+    //call back
+    [self beforeInsert];
+    
+    //construct sql and params.
+    NSMutableArray *parameterList = [NSMutableArray arrayWithCapacity:columns.count];
+    for (NSInteger i = 0; i < columns.count; i++) {
+        [parameterList addObject:@"?"];
+    }
+    NSString *sql = [NSString stringWithFormat:@"INSERT INTO %@ (%@) values(%@)", tableName, [columns componentsJoinedByString:@","], [parameterList componentsJoinedByString:@","]];
+    NSArray *propertyNames = [meta.columnMap dictionaryWithValuesForKeys:columns].allValues;
+    
+    //execute
+    if ([HZDBManager executeUpdate:sql withParams:[self validDBValuesForPropertys:propertyNames]]) {
+
+        if (incrementing) { [self setValue:@([HZDBManager lastInsertRowId]) forKey:[meta.primaryKeys firstObject]]; }
+        
+        [self sucessInsert];
+        return YES;
+    }
+    
+    return NO;
+}
+
+- (BOOL)update
+{
+    //get table structure.
+    HZModelMeta *meta = [self meta];
+    NSString *tableName = meta.tableName;
+    NSMutableDictionary *columnsMapWithoutPK = [NSMutableDictionary dictionaryWithDictionary:meta.columnMap];
+    [columnsMapWithoutPK removeObjectsForKeys:meta.primaryKeys];
+
+
+    [self beforeUpdate];
+    
+    NSMutableString *setValues = [NSMutableString string];
+    NSMutableArray *parameters = [NSMutableArray arrayWithCapacity:columnsMapWithoutPK.count];
+    [columnsMapWithoutPK enumerateKeysAndObjectsUsingBlock:^(NSString  *_Nonnull column, NSString  *_Nonnull property, BOOL * _Nonnull stop) {
+        [setValues appendFormat:@"%@ = ?,",column];
+        id data = [self validDBValueForProperty:property];
+        if (data) [parameters addObject:data];
+    }];
+    [setValues deleteCharactersInRange:NSMakeRange(setValues.length - 1, 1)];
+
+    
+    NSString *sql = [NSString stringWithFormat:@"UPDATE %@ SET %@ WHERE %@", tableName, setValues, [self wherePKWithMeta:meta]];
+    if ([HZDBManager executeUpdate:sql withParams:parameters]) {
+        
+        [self sucessUpdate];
+        return YES;
+    }
+    return NO;
+}
+
+- (BOOL)remove
+{
+    //get table structure.
+    HZModelMeta *meta = [self meta];
+    NSString *tableName = meta.tableName;
+    
+    NSString *sql = [NSString stringWithFormat:@"DELETE FROM %@ WHERE %@", tableName, [self wherePKWithMeta:meta]];
+    if ([HZDBManager executeUpdate:sql withParams:nil]) {
+        return YES;
+    }
+    return NO;
+}
+
+- (NSString *)wherePKWithMeta:(HZModelMeta *)meta
+{
+    NSArray *pks = meta.primaryKeys;
+    NSDictionary *maps = meta.columnMap;
+    
+    NSMutableString *wherePK = [NSMutableString string];
+    [pks enumerateObjectsUsingBlock:^(NSString  *_Nonnull column, NSUInteger idx, BOOL * _Nonnull stop) {
+        NSString *propertyName = [maps objectForKey:column];
+        if (propertyName) {
+            [wherePK appendFormat:@" %@ = '%@' AND",column,[self validDBValueForProperty:propertyName]];
+        }
+    }];
+    
+    NSAssert(wherePK.length > 0, @"map of column-property don't containe pk");
+    
+    [wherePK deleteCharactersInRange:NSMakeRange(wherePK.length - 4, 4)];
+    
+    return wherePK;
+}
+
+
 
 + (NSString *)whereStrWithKeys:(NSArray *)keys values:(NSArray *)values
 {
@@ -187,21 +235,21 @@ NSString *const kPrimaryKeyName = @"primaryKey";
 //    return rs;
 //}
 
-//- (BOOL)save
-//{
-//    BOOL rs = NO;
-//    if ([HZDBManager open]) {
-//        
-//        if (!self.isInDB) {
-//            rs = [self insert];
-//        }else {
-//            rs = [self updateSelf];
-//        }
-//        [HZDBManager close];
-//        return rs;
-//    }
-//    return NO;
-//}
+- (BOOL)save
+{
+    BOOL rs = NO;
+    if ([HZDBManager open]) {
+        
+        if (![self existInDB]) {
+            rs = [self insert];
+        }else {
+            rs = [self update];
+        }
+        [HZDBManager close];
+        return rs;
+    }
+    return NO;
+}
 
 //+ (BOOL)deleteWithKeys:(NSArray <NSString *> *)keys values:(NSArray *)values
 //{
@@ -302,25 +350,13 @@ NSString *const kPrimaryKeyName = @"primaryKey";
     NSArray *modelArray = nil;
     if ([HZDBManager open]) {
         NSArray *results= [HZDBManager executeQuery:sql withParams:nil];
+        
         NSMutableArray *objArray = [NSMutableArray arrayWithCapacity:results.count];
-        NSDictionary *columnPropertyDic = meta.columnMap;
         Class modelClass = meta.cla;
-        NSDictionary *casts = meta.casts;
+        
         [results enumerateObjectsUsingBlock:^(NSDictionary  *_Nonnull dic, NSUInteger idx, BOOL * _Nonnull stop) {
             NSObject *obj = [[modelClass alloc] init];
-            [dic enumerateKeysAndObjectsUsingBlock:^(NSString  *_Nonnull columnName, id  _Nonnull value, BOOL * _Nonnull stop) {
-                NSString *propertyName = [columnPropertyDic objectForKey:columnName];
-                if ([propertyName isKindOfClass:[NSString class]] && propertyName.length > 0) {
-                    
-                    NSString *type = [casts objectForKey:propertyName];
-                    id convertedValue = [self converteValue:value withType:type];
-                    
-                    NSAssert(convertedValue, @"HZORM 装换的值不能为nil");
-                    if (convertedValue && ![convertedValue isKindOfClass:[NSNull class]]) [obj setValue:convertedValue forKey:propertyName];
-                }
-
-            }];
-//            [obj setValue:@(YES) forKey:@"isInDB"];
+            [self configPropertyWithData:dic meta:meta forObj:obj];
             [objArray addObject:obj];
         }];
         modelArray = objArray;
@@ -329,6 +365,25 @@ NSString *const kPrimaryKeyName = @"primaryKey";
     
     return modelArray;
     
+}
+
++ (void)configPropertyWithData:(NSDictionary *)data meta:(HZModelMeta *)meta forObj:(NSObject *)obj
+{
+    NSDictionary *columnPropertyDic = meta.columnMap;
+    NSDictionary *casts = meta.casts;
+    
+    [data enumerateKeysAndObjectsUsingBlock:^(NSString  *_Nonnull columnName, id  _Nonnull value, BOOL * _Nonnull stop) {
+        NSString *propertyName = [columnPropertyDic objectForKey:columnName];
+        if ([propertyName isKindOfClass:[NSString class]] && propertyName.length > 0) {
+            
+            NSString *type = [casts objectForKey:propertyName];
+            id convertedValue = [self converteValue:value withType:type];
+            
+            NSAssert(convertedValue, @"HZORM 装换的值不能为nil");
+            if (convertedValue && ![convertedValue isKindOfClass:[NSNull class]]) [obj setValue:convertedValue forKey:propertyName];
+        }
+        
+    }];
 }
 
 + (id)converteValue:(id)value withType:(NSString *)type
@@ -406,32 +461,7 @@ NSString *const kPrimaryKeyName = @"primaryKey";
 
 
 #pragma mark - Property
-//- (BOOL)isInDB
-//{
-//    NSNumber *isInDB = objc_getAssociatedObject(self, &kIsInDBKey);
-//    if (!isInDB) {
-//        NSArray *keys = [[self class] getUniqueKeys];
-//        if (keys.count > 0) {
-//            NSMutableArray *values = [NSMutableArray arrayWithCapacity:keys.count];
-//            NSDictionary *columnPropertDic = [[self class] getColumnNames];
-//            [keys enumerateObjectsUsingBlock:^(NSString  *_Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-//                NSString *property = [columnPropertDic objectForKey:obj];
-//                id value = [self valueForKey:property];
-//                if (value) [values addObject:value];
-//            }];
-//            
-//            return [self checkExistWithKeys:keys values:values];
-//        }
-//    }
-//    return [isInDB boolValue];
-//}
-//
-//- (void)setIsInDB:(BOOL)isInDB
-//{
-//    [self willChangeValueForKey:@"isInDB"];
-//    objc_setAssociatedObject(self, &kIsInDBKey, @(isInDB), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-//    [self didChangeValueForKey:@"isInDB"];
-//}
+
 //
 //- (NSUInteger)primaryKey
 //{

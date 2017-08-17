@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		282EA1971F4546D100598CDC /* Person.m in Sources */ = {isa = PBXBuildFile; fileRef = 282EA1961F4546D100598CDC /* Person.m */; };
 		28BE06501F3AA49500D9ACE5 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 28BE064F1F3AA49500D9ACE5 /* main.m */; };
 		28BE06531F3AA49500D9ACE5 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 28BE06521F3AA49500D9ACE5 /* AppDelegate.m */; };
 		28BE06561F3AA49500D9ACE5 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 28BE06551F3AA49500D9ACE5 /* ViewController.m */; };
@@ -17,6 +18,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		282EA1951F4546D100598CDC /* Person.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Person.h; sourceTree = "<group>"; };
+		282EA1961F4546D100598CDC /* Person.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Person.m; sourceTree = "<group>"; };
 		28BE064B1F3AA49500D9ACE5 /* HZORM-Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "HZORM-Example.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		28BE064F1F3AA49500D9ACE5 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		28BE06511F3AA49500D9ACE5 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -82,6 +85,8 @@
 				28BE065C1F3AA49500D9ACE5 /* LaunchScreen.storyboard */,
 				28BE065F1F3AA49500D9ACE5 /* Info.plist */,
 				28BE064E1F3AA49500D9ACE5 /* Supporting Files */,
+				282EA1951F4546D100598CDC /* Person.h */,
+				282EA1961F4546D100598CDC /* Person.m */,
 			);
 			path = "HZORM-Example";
 			sourceTree = "<group>";
@@ -227,6 +232,7 @@
 			files = (
 				28BE06561F3AA49500D9ACE5 /* ViewController.m in Sources */,
 				28BE06531F3AA49500D9ACE5 /* AppDelegate.m in Sources */,
+				282EA1971F4546D100598CDC /* Person.m in Sources */,
 				28BE06501F3AA49500D9ACE5 /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -386,6 +392,7 @@
 				28BE06641F3AA49500D9ACE5 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

@@ -7,7 +7,8 @@
 //
 
 #import "AppDelegate.h"
-
+#import <HZORM/HZORM.h>
+#import "Person.h"
 @interface AppDelegate ()
 
 @end
@@ -17,6 +18,21 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
+    
+    NSString *dbPath = [NSHomeDirectory() stringByAppendingPathComponent:@"Documents/HZDatabase.db"];
+    HZDBManager.dbPath = dbPath;
+    NSLog(@"%@",dbPath);
+
+    Person *p = [[[Person search:@[@"name",@"age"]] where:@{@"id":@"2"}] first];
+    
+    NSLog(@"%@",p);
+//    Person *p = [[Person alloc] init];
+//    p.pAge = 23;
+//    p.pName = @"xzh2";
+//    p.pBooks = @[@"1",@"2",@"3",@"4",@"5"];
+//    BOOL result = [p save];
+//    
+//    NSLog(@"%@",result?@"yes":@"no");
     return YES;
 }
 

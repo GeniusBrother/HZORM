@@ -56,7 +56,7 @@ static id _instance;
 
 - (void)setup
 {
-    _shouldControlConnection = YES;
+    _autoControlConnection = YES;
     
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(applicationDidEnterBackground:) name:UIApplicationDidEnterBackgroundNotification object:nil];
 }
@@ -69,7 +69,7 @@ static id _instance;
 
 - (void)checkConnection
 {
-    if (self.shouldControlConnection) {
+    if (self.autoControlConnection) {
         [self.database open];
     }else {
         NSAssert([self isOpen], @"请先打开数据库");
@@ -86,7 +86,7 @@ static id _instance;
 
 - (BOOL)close
 {
-    if (self.shouldControlConnection) return NO;
+    if (self.autoControlConnection) return NO;
     
     return [self.database close];
 }
@@ -209,13 +209,13 @@ static id _instance;
 #pragma mark - Notification
 - (void)applicationDidEnterBackground:(NSNotification *)notification
 {
-    if(self.shouldControlConnection)  [self.database close];
+    if(self.autoControlConnection)  [self.database close];
 }
 
 #pragma mark - Setter
 - (void)setDbPath:(NSString *)dbPath
 {
-    if (!([dbPath isKindOfClass:[NSString class]] && dbPath.length > 0) && ![dbPath isEqualToString:_dbPath]) {
+    if (([dbPath isKindOfClass:[NSString class]] && dbPath.length > 0) && ![dbPath isEqualToString:_dbPath]) {
         [self.database close];
         
         NSString *directory = [dbPath stringByDeletingLastPathComponent];

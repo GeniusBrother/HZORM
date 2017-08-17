@@ -94,6 +94,8 @@
     return self;
 }
 
+
+
 - (NSArray *)get
 {
     NSMutableString *sql = [NSMutableString stringWithFormat:@"select %@ from %@",self.select,self.meta.tableName];
@@ -106,9 +108,17 @@
         [sql appendFormat:@" order by %@",self.orderBy];
     }
     
+    if (self.limit.length > 0) {
+        [sql appendFormat:@" limit %@",self.limit];
+    }
     
     return [NSObject findWithSql:sql withMeta:self.meta];
 }
 
+- (id)first
+{
+    self.limit = @"1";
+    return [[self get] firstObject];
+}
 
 @end
