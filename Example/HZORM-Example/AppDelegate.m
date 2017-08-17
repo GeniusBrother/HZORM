@@ -23,16 +23,22 @@
     HZDBManager.dbPath = dbPath;
     NSLog(@"%@",dbPath);
 
-    Person *p = [[[Person search:@[@"name",@"age"]] where:@{@"id":@"2"}] first];
-    
-    NSLog(@"%@",p);
-//    Person *p = [[Person alloc] init];
-//    p.pAge = 23;
-//    p.pName = @"xzh2";
-//    p.pBooks = @[@"1",@"2",@"3",@"4",@"5"];
-//    BOOL result = [p save];
+//    Person *p = [[[Person search:@[@"*"]] where:@{@"id":@"2"}] first];
 //    
-//    NSLog(@"%@",result?@"yes":@"no");
+//    NSLog(@"%@",p);
+    Person *p = [[Person alloc] init];
+    p.pAge = 28;
+    p.pName = @"xzh";
+    p.pBooks = @[@"1",];
+   
+    Person *p2 = [[Person alloc] init];
+    p2.pAge = 29;
+    p2.pName = @"xzh2";
+    p2.pBooks = @[@"1",@"2"];
+    
+    BOOL result = [Person insert:@[p,p2]];
+    
+    NSLog(@"%@",result?@"yes":@"no");
     return YES;
 }
 

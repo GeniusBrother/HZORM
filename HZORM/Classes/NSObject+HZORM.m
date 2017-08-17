@@ -8,12 +8,12 @@
 
 #import "NSObject+HZORM.h"
 #import <objc/runtime.h>
+#import "sqlite3.h"
 #import <FMDB/FMDB.h>
 #import "HZModelMeta.h"
 #import "HZQueryBuilder.h"
-static const char kPrimaryKey = '\0';
-static const char kIsInDBKey = '\0';
-NSString *const kPrimaryKeyName = @"primaryKey";
+
+
 @interface NSObject ()
 
 @property(nonatomic, assign) BOOL isInDB;
@@ -76,7 +76,7 @@ NSString *const kPrimaryKeyName = @"primaryKey";
 
 - (BOOL)existInDB
 {
-    HZModelMeta *meta = [self meta];
+    HZModelMeta *meta = [[self class] meta];
     NSString *tableName = meta.tableName;
     
     if ([HZDBManager open]) {
@@ -91,52 +91,94 @@ NSString *const kPrimaryKeyName = @"primaryKey";
 }
 
 
-- (HZModelMeta *)meta
++ (HZModelMeta *)meta
 {
     return [[HZModelMeta alloc] initWithClass:[self class]];
 }
 
-- (BOOL)insert
+//批量创建插入sql语句
++ (NSArray *)insertSqlsWithObjs:(NSArray *)objArray meta:(HZModelMeta **)meta
 {
-    //get table structure.
-    HZModelMeta *meta = [self meta];
-    NSArray *columns = meta.columnMap.allKeys;
-    NSString *tableName = meta.tableName;
-    BOOL incrementing = meta.incrementing;
+    if (!(objArray.count > 0)) return nil;
+    
+    HZModelMeta *metaObj = [self meta];
+    *meta = metaObj;
+    NSArray *columns = metaObj.columnMap.allKeys;
+    NSString *tableName = metaObj.tableName;
+    BOOL incrementing = metaObj.incrementing;
     if (incrementing) {
-        NSString *primaryKey = [meta.primaryKeys firstObject];
+        NSString *primaryKey = [metaObj.primaryKeys firstObject];
         NSMutableArray *columnsWithoutPK = [NSMutableArray arrayWithArray:columns];
         [columnsWithoutPK removeObject:primaryKey];
         columns = columnsWithoutPK;
     }
     
+    NSMutableArray *insertSqls = [NSMutableArray arrayWithCapacity:objArray.count];
+    [objArray enumerateObjectsUsingBlock:^(NSObject  *_Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        //construct sql and params.
+        NSArray *propertyNames = [metaObj.columnMap dictionaryWithValuesForKeys:columns].allValues;
+        NSArray *validDBValues = [obj validDBValuesForPropertys:propertyNames];
+        NSMutableArray *parameterList = [NSMutableArray arrayWithCapacity:validDBValues.count];
+        [validDBValues enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+            [parameterList addObject:[NSString stringWithFormat:@"'%@'",obj]];
+        }];
+        
+        NSString *sql = [NSString stringWithFormat:@"INSERT INTO %@ (%@) values(%@)", tableName, [columns componentsJoinedByString:@","], [parameterList componentsJoinedByString:@","]];
+        [insertSqls addObject:sql];
+    }];
+
+    return insertSqls;
+}
+
+#pragma mark - Public Method
+- (BOOL)insert
+{
     //call back
     [self beforeInsert];
     
-    //construct sql and params.
-    NSMutableArray *parameterList = [NSMutableArray arrayWithCapacity:columns.count];
-    for (NSInteger i = 0; i < columns.count; i++) {
-        [parameterList addObject:@"?"];
-    }
-    NSString *sql = [NSString stringWithFormat:@"INSERT INTO %@ (%@) values(%@)", tableName, [columns componentsJoinedByString:@","], [parameterList componentsJoinedByString:@","]];
-    NSArray *propertyNames = [meta.columnMap dictionaryWithValuesForKeys:columns].allValues;
+    //construct sql
+    HZModelMeta *meta;
+    NSString *sql = [[[self class] insertSqlsWithObjs:@[self] meta:&meta] firstObject];
     
     //execute
-    if ([HZDBManager executeUpdate:sql withParams:[self validDBValuesForPropertys:propertyNames]]) {
-
-        if (incrementing) { [self setValue:@([HZDBManager lastInsertRowId]) forKey:[meta.primaryKeys firstObject]]; }
+    if ([HZDBManager executeUpdate:sql withParams:nil]) {
+        
+        if (meta.incrementing) [self setValue:@([HZDBManager lastInsertRowId]) forKey:[meta.columnMap objectForKey:[meta.primaryKeys firstObject]]];
         
         [self sucessInsert];
+        
         return YES;
     }
     
     return NO;
 }
 
++ (BOOL)insert:(NSArray *)models
+{
+    HZModelMeta *meta;
+    NSArray *insertSqls = [[self class] insertSqlsWithObjs:models meta:&meta];
+    
+    if (!(insertSqls.count > 0)) return NO;
+    
+    BOOL result = [HZDBManager executeStatements:[insertSqls componentsJoinedByString:@";"] withResultBlock:nil];
+    
+    if (meta.incrementing) {
+        NSInteger lastInsertRowId = [HZDBManager lastInsertRowId];
+        NSInteger lastIndex = models.count - 1;
+        NSString *pkPropertyName = [meta.columnMap objectForKey:[meta.primaryKeys firstObject]];
+        [models enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+            NSInteger rowId = lastInsertRowId - (lastIndex - idx);
+            [obj setValue:@(rowId) forKey:pkPropertyName];
+        }];
+    }
+
+    return result;
+}
+
 - (BOOL)update
 {
     //get table structure.
-    HZModelMeta *meta = [self meta];
+    HZModelMeta *meta = [[self class] meta];
     NSString *tableName = meta.tableName;
     NSMutableDictionary *columnsMapWithoutPK = [NSMutableDictionary dictionaryWithDictionary:meta.columnMap];
     [columnsMapWithoutPK removeObjectsForKeys:meta.primaryKeys];
@@ -166,10 +208,22 @@ NSString *const kPrimaryKeyName = @"primaryKey";
 - (BOOL)remove
 {
     //get table structure.
-    HZModelMeta *meta = [self meta];
+    HZModelMeta *meta = [[self class] meta];
     NSString *tableName = meta.tableName;
     
     NSString *sql = [NSString stringWithFormat:@"DELETE FROM %@ WHERE %@", tableName, [self wherePKWithMeta:meta]];
+    if ([HZDBManager executeUpdate:sql withParams:nil]) {
+        return YES;
+    }
+    return NO;
+}
+
++ (BOOL)remove
+{
+    HZModelMeta *meta = [self meta];
+    NSString *tableName = meta.tableName;
+    
+    NSString *sql = [NSString stringWithFormat:@"DELETE FROM %@", tableName];
     if ([HZDBManager executeUpdate:sql withParams:nil]) {
         return YES;
     }
@@ -250,6 +304,8 @@ NSString *const kPrimaryKeyName = @"primaryKey";
     }
     return NO;
 }
+
+
 
 //+ (BOOL)deleteWithKeys:(NSArray <NSString *> *)keys values:(NSArray *)values
 //{
