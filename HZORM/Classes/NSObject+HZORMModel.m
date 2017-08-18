@@ -20,7 +20,12 @@
 
 + (BOOL)isIncrementing { return YES; }
 
-+ (id)getNewValueForProperty:(NSString *)name withOriginValue:(id)originValue { return originValue; }
 
-
+#pragma mark - CallBack
+- (void)beforeInsert {}
+- (void)sucessInsert {}
+- (void)beforeUpdate {}
+- (void)sucessUpdate {}
+- (void)beforeRemove {}
+- (void)sucessRemove {}
 @end

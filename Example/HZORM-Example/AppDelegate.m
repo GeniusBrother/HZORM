@@ -9,6 +9,7 @@
 #import "AppDelegate.h"
 #import <HZORM/HZORM.h>
 #import "Person.h"
+#import <FMDB/FMDB.h>
 @interface AppDelegate ()
 
 @end
@@ -26,19 +27,35 @@
 //    Person *p = [[[Person search:@[@"*"]] where:@{@"id":@"2"}] first];
 //    
 //    NSLog(@"%@",p);
-    Person *p = [[Person alloc] init];
-    p.pAge = 28;
-    p.pName = @"xzh";
-    p.pBooks = @[@"1",];
-   
-    Person *p2 = [[Person alloc] init];
-    p2.pAge = 29;
-    p2.pName = @"xzh2";
-    p2.pBooks = @[@"1",@"2"];
+//    Person *p = [[Person alloc] init];
+//    p.pAge = 28;
+//    p.pName = @"xzh";
+//    p.pBooks = @[@"1",];
+
+//    Person *p2 = [[Person alloc] init];
+//    p2.pAge = 29;
+//    p2.pName = @"xzh2";
+//    p2.pBooks = @[@"1",@"2"];
+//    BOOL result = [Person insert:@[p,p2]];
+    FMDatabaseQueue *queue = [FMDatabaseQueue databaseQueueWithPath:dbPath];
+    [queue inDatabase:^(FMDatabase * _Nonnull db) {
+        FMResultSet *resultSet = [db executeQuery:@"select * from person"];
+        while ([resultSet next]) {
+            NSLog(@"%@",resultSet.resultDictionary);
+        }
+        [resultSet close];
+    }];
+    NSLog(@"aaaaa");
+    [queue inDatabase:^(FMDatabase * _Nonnull db) {
+        FMResultSet *resultSet = [db executeQuery:@"select * from person"];
+        while ([resultSet next]) {
+            NSLog(@"%@",resultSet.resultDictionary);
+        }
+        [resultSet close];
+    }];
     
-    BOOL result = [Person insert:@[p,p2]];
+    NSLog(@"hhhhhhhhh");
     
-    NSLog(@"%@",result?@"yes":@"no");
     return YES;
 }
 
