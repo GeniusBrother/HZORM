@@ -6,7 +6,7 @@ HZORM
 [![CocoaPods](http://img.shields.io/cocoapods/p/HZORM.svg?style=flat)](http://cocoadocs.org/docsets/HZORM)&nbsp;
 [![Support](https://img.shields.io/badge/support-iOS%208%2B%20-blue.svg?style=flat)](https://www.apple.com/nl/ios/)&nbsp;
 
-HZORM provides a beautiful, simple ActiveRecord implementation to interact with the database.<br/>
+Provides a beautiful, simple ActiveRecord implementation to interact with the database.<br/>
 (It's a component of [HZExtend](https://github.com/GeniusBrother/HZExtend))
 
 Contact
