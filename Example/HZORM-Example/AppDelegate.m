@@ -22,18 +22,6 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
     
-    NSString *dbPath = [NSHomeDirectory() stringByAppendingPathComponent:@"Documents/HZDatabase.db"];
-    HZDBManager.dbPath = dbPath;
-    NSLog(@"%@",dbPath);
-
-    Role *role = [[Role alloc] init];
-    role.name = @"明星";
-    role.uid = 10;
-    
-    NSArray *rs = [[[Person search:@[@"*"]] join:@"Role" withFirstColumn:@"Person.id" operator:@"=" secondColumn:@"Role.uid"] get];
-    
-    NSLog(@"%@",rs?@"yes":@"no");
-    
     return YES;
 }
 
