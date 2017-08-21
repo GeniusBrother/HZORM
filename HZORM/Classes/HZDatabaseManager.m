@@ -1,18 +1,19 @@
 //
 //  HZDatabaseManager.m
-//  Pods
+//  HZORM <https://github.com/GeniusBrother/HZORM>
 //
-//  Created by xzh on 2016/12/8.
-//
+//  Created by GeniusBrother on 16/12/8.
+//  Copyright (c) 2016 GeniusBrother. All rights reserved.
 //
 
 #import "HZDatabaseManager.h"
 #import <FMDB/FMDB.h>
-
 #import "sqlite3.h"
 @interface HZDatabaseManager ()
 
-@property(nonatomic, strong) FMDatabase *database;
+@property(nonatomic, strong) FMDatabaseQueue *dbQueue;
+@property (nonatomic, strong) NSRecursiveLock *threadLock;
+@property(nonatomic, strong) FMDatabase *executingDB;
 
 @end
 
@@ -56,167 +57,184 @@ static id _instance;
 
 - (void)setup
 {
-    _shouldControlConnection = YES;
-    
-    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(applicationDidEnterBackground:) name:UIApplicationDidEnterBackgroundNotification object:nil];
+    self.threadLock = [[NSRecursiveLock alloc] init];
 }
 
 #pragma mark - Private Method
-- (BOOL)isOpen
+- (void)inDatabase:(void (^)(FMDatabase *db))block
 {
-    return [self.database goodConnection];
-}
-
-- (void)checkConnection
-{
-    if (self.shouldControlConnection) {
-        [self.database open];
+    if(!block) return;
+    
+    [self.threadLock lock];
+    
+    if (self.executingDB) {
+        block(self.executingDB);
     }else {
-        NSAssert([self isOpen], @"请先打开数据库");
+        __weak typeof(self) weakSelf = self;
+        [self.dbQueue inDatabase:^(FMDatabase * _Nonnull db) {
+            weakSelf.executingDB = db;
+            block(db);
+            weakSelf.executingDB = nil;
+        }];
     }
+
+    [self.threadLock unlock];
 }
 
 #pragma mark - Public Method
-- (BOOL)open
-{
-    NSAssert(self.dbPath, @"请先设置db path ");
-    
-    return [self.database open];
-}
-
-- (BOOL)close
-{
-    if (self.shouldControlConnection) return NO;
-    
-    return [self.database close];
-}
-
 - (BOOL)executeUpdate:(NSString *)sql withParams:(NSArray *)data
 {
-    [self checkConnection];
-    
     if (!([sql isKindOfClass:[NSString class]] && sql.length > 0)) {
         NSAssert(NO, @"%s SQL语句为空",__FUNCTION__);
         return NO;
     }
     
-    BOOL result = NO;
-    if ([data isKindOfClass:[NSArray class]] && data.count > 0) {
-        result = [self.database executeUpdate:sql withArgumentsInArray:data];
-    }else {
-        result = [self.database executeUpdate:sql];
-    }
-    
+    __block BOOL result = NO;
+    [self inDatabase:^(FMDatabase * _Nonnull db) {
+        if ([data isKindOfClass:[NSArray class]] && data.count > 0) {
+            result = [db executeUpdate:sql withArgumentsInArray:data];
+        }else {
+            result = [db executeUpdate:sql];
+        }
 #if DEBUG
-    if (!result) {
-        NSLog(@"update 失败 错误信息-----%@",self.database.lastErrorMessage);
-    }
+        if (!result) {
+            NSLog(@"update 失败 错误信息-----%@",db.lastErrorMessage);
+        }
 #endif
+    }];
+
+    
+
     
     return result;
 }
 
 - (NSArray *)executeQuery:(NSString *)sql withParams:(NSArray *)data
 {
-    [self checkConnection];
     
     if (!([sql isKindOfClass:[NSString class]] && sql.length > 0)) {
         NSAssert(NO, @"%s SQL语句为空",__FUNCTION__);
         return nil;
     }
     
-    FMResultSet *rs = nil;
     NSMutableArray *array = [NSMutableArray array];
-    if ([data isKindOfClass:[NSArray class]] && data.count > 0) {
-        rs = [self.database executeQuery:sql withArgumentsInArray:data];
-    }else {
-        rs = [self.database executeQuery:sql];
-    }
-    
-#if DEBUG
-    if (!rs) {
-        NSLog(@"sql 查询失败:%@",self.database.lastErrorMessage);
-        return nil;
-    }
-#endif
-    
+    [self inDatabase:^(FMDatabase * _Nonnull db) {
+        FMResultSet *rs = nil;
+        
+        if ([data isKindOfClass:[NSArray class]] && data.count > 0) {
+            rs = [db executeQuery:sql withArgumentsInArray:data];
+        }else {
+            rs = [db executeQuery:sql];
+        }
+        
 
-    while ([rs next]) {
-        NSMutableDictionary *dic = (NSMutableDictionary *)rs.resultDictionary;
-        if (dic) [array addObject:dic];
-    }
-    [rs close];
-    
+        if (!rs) {
+#if DEBUG
+            NSLog(@"sql 查询失败:%@",db.lastErrorMessage);
+#endif
+        }else {
+            while ([rs next]) {
+                NSMutableDictionary *dic = (NSMutableDictionary *)rs.resultDictionary;
+                if (dic) [array addObject:dic];
+            }
+            [rs close];
+        }
+    }];
+
     return array;
 }
 
 - (BOOL)executeStatements:(NSString *)sql withResultBlock:(HZDBExecuteStatementsCallbackBlock)block
 {
-    [self checkConnection];
+
     if (!([sql isKindOfClass:[NSString class]] && sql.length > 0)) {
         NSAssert(NO, @"%s SQL语句为空",__FUNCTION__);
         return NO;
     }
 
-    return [self.database executeStatements:sql withResultBlock:block];
+    __block BOOL result = NO;
+    [self inDatabase:^(FMDatabase * _Nonnull db) {
+        result = [db executeStatements:sql withResultBlock:block];
+    }];
+    
+    return result;
 }
 
-- (void)beginTransactionWithBlock:(BOOL (^)(HZDatabaseManager * _Nonnull obj))completion
+- (void)close
 {
-    if (!completion) return;
-    
-    [self checkConnection];
-    [self.database beginTransaction];
-    BOOL rs = completion(self);
-    if (rs) {
-        [self.database commit];
-    }else {
-        [self.database rollback];
-    }
+    [self.dbQueue close];
+}
+
+- (void)beginTransactionWithBlock:(BOOL (^)(HZDatabaseManager * _Nonnull obj))block
+{
+    if (!block) return;
+
+    __weak HZDatabaseManager *weakSelf = self;
+    [self inDatabase:^(FMDatabase *db) {
+        [db beginTransaction];
+        BOOL rs = block(weakSelf);
+        if (rs) {
+            [db commit];
+        }else {
+            [db rollback];
+        }
+    }];
+
 }
 
 - (double)doubleForQuery:(NSString *)sql
 {
-    [self checkConnection];
+    __block double value = MAXFLOAT;
+    [self inDatabase:^(FMDatabase *db) {
+        value = [db doubleForQuery:sql];
+    }];
     
-    if (!([sql isKindOfClass:[NSString class]] && sql.length > 0)) {
-        NSAssert(NO, @"%s SQL语句为空",__FUNCTION__);
-        return MAXFLOAT;
-    }
-    
-    return [self.database doubleForQuery:sql];
+    return value;
 }
 
 - (long)longForQuery:(NSString *)sql
 {
-    [self checkConnection];
-    
-    if (!([sql isKindOfClass:[NSString class]] && sql.length > 0)) {
-        NSAssert(NO, @"%s SQL语句为空",__FUNCTION__);
-        return NSNotFound;
-    }
-    
-    return [self.database longForQuery:sql];
+    __block long value = NSNotFound;
+    [self inDatabase:^(FMDatabase *db) {
+        value = [db longForQuery:sql];
+    }];
+    return value;
 }
 
-- (NSUInteger)lastInsertRowId
+- (NSString *)stringForQuery:(NSString *)sql
 {
-    [self checkConnection];
-    
-    return (NSUInteger)[self.database lastInsertRowId];
+    __block NSString *value = nil;
+    [self inDatabase:^(FMDatabase *db) {
+        value = [db stringForQuery:sql];
+    }];
+    return value;
 }
 
-#pragma mark - Notification
-- (void)applicationDidEnterBackground:(NSNotification *)notification
+- (int)intForQuery:(NSString *)sql
 {
-    if(self.shouldControlConnection)  [self.database close];
+    __block int value = 0;
+    [self inDatabase:^(FMDatabase *db) {
+        value = [db intForQuery:sql];
+    }];
+    return value;
+}
+
+- (int64_t)lastInsertRowId
+{
+    __block int64_t rowId = NSNotFound;
+    [self inDatabase:^(FMDatabase *db) {
+        rowId = [db lastInsertRowId];
+    }];
+    
+    return rowId;
 }
 
 #pragma mark - Setter
 - (void)setDbPath:(NSString *)dbPath
 {
-    if (!([dbPath isKindOfClass:[NSString class]] && dbPath.length > 0) && ![dbPath isEqualToString:_dbPath]) {
-        [self.database close];
+    if (([dbPath isKindOfClass:[NSString class]] && dbPath.length > 0) && ![dbPath isEqualToString:_dbPath]) {
+        
+        [self.dbQueue close];
         
         NSString *directory = [dbPath stringByDeletingLastPathComponent];
         NSFileManager *fileManager = [NSFileManager defaultManager];
@@ -225,7 +243,7 @@ static id _instance;
             [fileManager createDirectoryAtPath:directory withIntermediateDirectories:YES attributes:nil error:&error];
         }
         
-        self.database = [FMDatabase databaseWithPath:dbPath];   //用到的时候去连接数据库
+        self.dbQueue = [FMDatabaseQueue databaseQueueWithPath:dbPath];
     }
     _dbPath = dbPath;
 }
