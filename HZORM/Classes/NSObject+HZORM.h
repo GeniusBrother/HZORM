@@ -57,7 +57,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (BOOL)remove;
 
 /**
- Deletes the all model from the database.
+ Deletes the all models in table from the database.
  
  @return `YES` upon success; `NO` upon failure.
  */
@@ -81,7 +81,7 @@ NS_ASSUME_NONNULL_BEGIN
 + (BOOL)insert:(NSArray *)models;
 
 /**
- Returns the all ORM models, or nil if don't exists any ORM models for receiver.
+ Returns the all ORM models in table, or nil if don't exists any ORM models for receiver.
  */
 + (nullable NSArray *)all;
 

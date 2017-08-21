@@ -15,5 +15,4 @@
 @property(nonatomic, assign) NSInteger pAge;
 
 @property(nonatomic, copy) NSArray *pBooks;
-
 @end
