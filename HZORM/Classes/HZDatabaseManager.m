@@ -219,9 +219,9 @@ static id _instance;
     return value;
 }
 
-- (NSUInteger)lastInsertRowId
+- (int64_t)lastInsertRowId
 {
-    __block NSUInteger rowId = NSNotFound;
+    __block int64_t rowId = NSNotFound;
     [self inDatabase:^(FMDatabase *db) {
         rowId = [db lastInsertRowId];
     }];

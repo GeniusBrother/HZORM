@@ -115,7 +115,7 @@ typedef int(^HZDBExecuteStatementsCallbackBlock)(NSDictionary *resultsDictionary
 /**
  Returns The rowid of the last inserted row.
  */
-- (NSUInteger)lastInsertRowId;
+- (int64_t)lastInsertRowId;
 
 /**
  Close database used by queue.
