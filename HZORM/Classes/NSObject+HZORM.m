@@ -1,9 +1,9 @@
 //
-//  NSObject+HZModel.m
-//  Pods
+//  NSObject+HZORM.m
+//  HZORM <https://github.com/GeniusBrother/HZORM>
 //
-//  Created by xzh on 2016/12/8.
-//
+//  Created by GeniusBrother on 16/12/8.
+//  Copyright (c) 2016 GeniusBrother. All rights reserved.
 //
 
 #import "NSObject+HZORM.h"
@@ -24,16 +24,13 @@
 - (BOOL)save
 {
     BOOL rs = NO;
-    if ([HZDBManager open]) {
-        if (![self existInDB]) {
-            rs = [self insert];
-        }else {
-            rs = [self update];
-        }
-        [HZDBManager close];
-        return rs;
+    if (![self existInDB]) {
+        rs = [self insert];
+    }else {
+        rs = [self update];
     }
-    return NO;
+    
+    return rs;
 }
 
 - (BOOL)insert
@@ -80,7 +77,7 @@
     return result;
 }
 
-+ (BOOL)remove:(NSArray<NSNumber *> *)pks
++ (BOOL)remove:(NSArray *)pks
 {
     if (!([pks isKindOfClass:[NSArray class]] && pks.count > 0)) return NO;
     
@@ -156,13 +153,14 @@
 
 
 #pragma mark Search
-+ (instancetype)find:(NSInteger)pk
++ (instancetype)find:(id)pk
 {
+    if (!pk) return nil;
+    
     HZModelMeta *meta = [self meta];
-    if (!meta.incrementing) return nil;
     
     NSString *pkName = [meta.primaryKeys firstObject];
-    return [[[self search:@[@"*"]] where:@{pkName:@(pk)}] first];
+    return [[[self search:@[@"*"]] where:@{pkName:pk}] first];
 }
 
 + (instancetype)firstWithKeyValues:(NSDictionary *)keyValues
@@ -192,10 +190,9 @@
 {
     if(!(sql.length > 0 && meta)) return nil;
     
-    NSArray *modelArray = nil;
-    if ([HZDBManager open]) {
-        NSArray *results= [HZDBManager executeQuery:sql withParams:nil];
-        
+    NSArray *results= [HZDBManager executeQuery:sql withParams:nil];
+    
+    if (([results isKindOfClass:[NSArray class]] && results.count > 0)) {
         NSMutableArray *objArray = [NSMutableArray arrayWithCapacity:results.count];
         Class modelClass = meta.cla;
         
@@ -204,12 +201,10 @@
             [self configPropertyWithData:dic meta:meta forObj:obj];
             [objArray addObject:obj];
         }];
-        modelArray = objArray;
-        [HZDBManager close];
+        return objArray;
     }
-    
-    return modelArray;
-    
+
+    return nil;
 }
 
 #pragma mark - Private Method
@@ -351,15 +346,9 @@
     HZModelMeta *meta = [[self class] meta];
     NSString *tableName = meta.tableName;
     
-    if ([HZDBManager open]) {
-        
-        NSInteger count = [HZDBManager longForQuery:[NSString stringWithFormat:@"select count(*) from %@ where %@",tableName, [self wherePKWithMeta:meta]]];
-        [HZDBManager close];
-        
-        return count;
-    }
+    NSInteger count = [HZDBManager longForQuery:[NSString stringWithFormat:@"select count(*) from %@ where %@",tableName, [self wherePKWithMeta:meta]]];
     
-    return NO;
+    return count>0?YES:NO;
 }
 
 

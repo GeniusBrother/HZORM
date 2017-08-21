@@ -1,9 +1,9 @@
 //
 //  HZQueryBuilder.m
-//  Pods
+//  HZORM <https://github.com/GeniusBrother/HZORM>
 //
-//  Created by xzh on 2017/8/15.
-//
+//  Created by GeniusBrother on 17/8/15.
+//  Copyright (c) 2017 GeniusBrother. All rights reserved.
 //
 
 #import "HZQueryBuilder.h"
@@ -16,8 +16,11 @@
 @property(nonatomic, copy) NSString *select;
 @property(nonatomic, copy) NSString *where;
 @property(nonatomic, copy) NSString *orderBy;
+@property(nonatomic, copy) NSString *groupBy;
 @property(nonatomic, copy) NSString *join;
-@property(nonatomic, copy) NSString *limit;
+@property(nonatomic, copy) NSString *having;
+@property(nonatomic, assign) NSInteger skip;
+@property(nonatomic, assign) NSInteger take;
 
 @end
 
@@ -46,11 +49,15 @@
     _select = @"";
     _where = @"";
     _orderBy = @"";
+    _groupBy = @"";
     _join = @"";
-    _limit = @"";
+    _having = @"";
+    _skip = -1;
+    _take = 0;
 }
 
 #pragma mark - Public Method
+#pragma mark Construct
 - (HZQueryBuilder *)select:(NSArray<NSString *> *)columns
 {
     if (!(columns.count > 0)) return self;
@@ -94,11 +101,58 @@
     return self;
 }
 
+- (HZQueryBuilder *)skip:(NSInteger)skip
+{
+    self.skip = skip;
+    
+    return self;
+}
 
+- (HZQueryBuilder *)take:(NSInteger)take
+{
+    self.take = take;
+    
+    return self;
+}
 
+- (HZQueryBuilder *)join:(NSString *)tableName withFirstColumn:(nonnull NSString *)firstColumn
+                operator:(nullable NSString *)opera
+            secondColumn:(nonnull NSString *)secondColumn
+{
+    
+    self.join = [NSString stringWithFormat:@"%@ on %@ = %@",tableName,firstColumn,secondColumn];
+    
+    return self;
+}
+
+- (HZQueryBuilder *)orderBy:(NSString *)column desc:(BOOL)desc
+{
+    self.orderBy = [NSString stringWithFormat:@"%@ %@",column,desc?@"DESC":@"ASC"];
+    return self;
+}
+
+- (HZQueryBuilder *)groupBy:(NSString *)groupBy
+{
+    self.groupBy = groupBy;
+    
+    return self;
+}
+
+- (HZQueryBuilder *)having:(NSString *)raw
+{
+    self.having = raw;
+    
+    return self;
+}
+
+#pragma mark Retrieve
 - (NSArray *)get
 {
     NSMutableString *sql = [NSMutableString stringWithFormat:@"select %@ from %@",self.select,self.meta.tableName];
+    
+    if (self.join.length > 0) {
+        [sql appendFormat:@" inner join %@",self.join];
+    }
     
     if (self.where.length > 0) {
         [sql appendFormat:@" where %@",self.where];
@@ -108,8 +162,17 @@
         [sql appendFormat:@" order by %@",self.orderBy];
     }
     
-    if (self.limit.length > 0) {
-        [sql appendFormat:@" limit %@",self.limit];
+    if (self.groupBy.length > 0) {
+        [sql appendFormat:@" group by %@",self.groupBy];
+    }
+    
+    if (self.having.length > 0) {
+        [sql appendFormat:@" having %@",self.having];
+    }
+    
+    NSString *limit = [self limit];
+    if (limit.length > 0) {
+        [sql appendFormat:@" limit %@",limit];
     }
     
     return [NSObject findWithSql:sql withMeta:self.meta];
@@ -117,8 +180,25 @@
 
 - (id)first
 {
-    self.limit = @"1";
+    self.take = 1;
     return [[self get] firstObject];
+}
+
+#pragma mark - Private Method
+- (NSString *)limit
+{
+    NSInteger offset = self.skip;
+    NSInteger take = self.take;
+    
+    if (offset >= 0 && take > 0) {
+        return [NSString stringWithFormat:@"%ld, %ld",offset,take];
+    }else if (offset >= 0) {
+        return [NSString stringWithFormat:@"%ld, 1",offset];
+    }else if (take > 0){
+        return [NSString stringWithFormat:@"%ld",take];
+    }else {
+        return @"";
+    }
 }
 
 @end

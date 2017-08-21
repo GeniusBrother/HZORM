@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		282EA1971F4546D100598CDC /* Person.m in Sources */ = {isa = PBXBuildFile; fileRef = 282EA1961F4546D100598CDC /* Person.m */; };
+		2846CD001F4A7D9900093654 /* Student.m in Sources */ = {isa = PBXBuildFile; fileRef = 2846CCFF1F4A7D9900093654 /* Student.m */; };
+		2846CD031F4AB29F00093654 /* Role.m in Sources */ = {isa = PBXBuildFile; fileRef = 2846CD021F4AB29F00093654 /* Role.m */; };
 		28BE06501F3AA49500D9ACE5 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 28BE064F1F3AA49500D9ACE5 /* main.m */; };
 		28BE06531F3AA49500D9ACE5 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 28BE06521F3AA49500D9ACE5 /* AppDelegate.m */; };
 		28BE06561F3AA49500D9ACE5 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 28BE06551F3AA49500D9ACE5 /* ViewController.m */; };
@@ -20,6 +22,10 @@
 /* Begin PBXFileReference section */
 		282EA1951F4546D100598CDC /* Person.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Person.h; sourceTree = "<group>"; };
 		282EA1961F4546D100598CDC /* Person.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Person.m; sourceTree = "<group>"; };
+		2846CCFE1F4A7D9900093654 /* Student.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Student.h; sourceTree = "<group>"; };
+		2846CCFF1F4A7D9900093654 /* Student.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Student.m; sourceTree = "<group>"; };
+		2846CD011F4AB29F00093654 /* Role.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Role.h; sourceTree = "<group>"; };
+		2846CD021F4AB29F00093654 /* Role.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Role.m; sourceTree = "<group>"; };
 		28BE064B1F3AA49500D9ACE5 /* HZORM-Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "HZORM-Example.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		28BE064F1F3AA49500D9ACE5 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		28BE06511F3AA49500D9ACE5 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -85,8 +91,12 @@
 				28BE065C1F3AA49500D9ACE5 /* LaunchScreen.storyboard */,
 				28BE065F1F3AA49500D9ACE5 /* Info.plist */,
 				28BE064E1F3AA49500D9ACE5 /* Supporting Files */,
+				2846CD011F4AB29F00093654 /* Role.h */,
+				2846CD021F4AB29F00093654 /* Role.m */,
 				282EA1951F4546D100598CDC /* Person.h */,
 				282EA1961F4546D100598CDC /* Person.m */,
+				2846CCFE1F4A7D9900093654 /* Student.h */,
+				2846CCFF1F4A7D9900093654 /* Student.m */,
 			);
 			path = "HZORM-Example";
 			sourceTree = "<group>";
@@ -232,8 +242,10 @@
 			files = (
 				28BE06561F3AA49500D9ACE5 /* ViewController.m in Sources */,
 				28BE06531F3AA49500D9ACE5 /* AppDelegate.m in Sources */,
+				2846CD001F4A7D9900093654 /* Student.m in Sources */,
 				282EA1971F4546D100598CDC /* Person.m in Sources */,
 				28BE06501F3AA49500D9ACE5 /* main.m in Sources */,
+				2846CD031F4AB29F00093654 /* Role.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -1,9 +1,9 @@
 //
 //  HZModelMeta.h
-//  Pods
+//  HZORM <https://github.com/GeniusBrother/HZORM>
 //
-//  Created by xzh on 2017/8/15.
-//
+//  Created by GeniusBrother on 17/8/15.
+//  Copyright (c) 2017 GeniusBrother. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>

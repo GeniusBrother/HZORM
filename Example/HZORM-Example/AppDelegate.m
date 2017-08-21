@@ -9,6 +9,8 @@
 #import "AppDelegate.h"
 #import <HZORM/HZORM.h>
 #import "Person.h"
+#import "Role.h"
+#import "Student.h"
 #import <FMDB/FMDB.h>
 @interface AppDelegate ()
 
@@ -24,37 +26,13 @@
     HZDBManager.dbPath = dbPath;
     NSLog(@"%@",dbPath);
 
-//    Person *p = [[[Person search:@[@"*"]] where:@{@"id":@"2"}] first];
-//    
-//    NSLog(@"%@",p);
-//    Person *p = [[Person alloc] init];
-//    p.pAge = 28;
-//    p.pName = @"xzh";
-//    p.pBooks = @[@"1",];
-
-//    Person *p2 = [[Person alloc] init];
-//    p2.pAge = 29;
-//    p2.pName = @"xzh2";
-//    p2.pBooks = @[@"1",@"2"];
-//    BOOL result = [Person insert:@[p,p2]];
-    FMDatabaseQueue *queue = [FMDatabaseQueue databaseQueueWithPath:dbPath];
-    [queue inDatabase:^(FMDatabase * _Nonnull db) {
-        FMResultSet *resultSet = [db executeQuery:@"select * from person"];
-        while ([resultSet next]) {
-            NSLog(@"%@",resultSet.resultDictionary);
-        }
-        [resultSet close];
-    }];
-    NSLog(@"aaaaa");
-    [queue inDatabase:^(FMDatabase * _Nonnull db) {
-        FMResultSet *resultSet = [db executeQuery:@"select * from person"];
-        while ([resultSet next]) {
-            NSLog(@"%@",resultSet.resultDictionary);
-        }
-        [resultSet close];
-    }];
+    Role *role = [[Role alloc] init];
+    role.name = @"明星";
+    role.uid = 10;
     
-    NSLog(@"hhhhhhhhh");
+    NSArray *rs = [[[Person search:@[@"*"]] join:@"Role" withFirstColumn:@"Person.id" operator:@"=" secondColumn:@"Role.uid"] get];
+    
+    NSLog(@"%@",rs?@"yes":@"no");
     
     return YES;
 }
