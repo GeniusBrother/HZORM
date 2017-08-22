@@ -127,3 +127,29 @@ NSArray *models = [[[[Person search:@[@"*"]] where:@{@"age",@23}] orderby:@"name
 //join
 NSArray *models = [[[Person search:@[@"*"]] where:@{@"age",@23}] join:@"Role" withFirstColumn:@"Person.id" operator:@"=" secondColumn:@"Role.uid"];
 ```
+
+### SQL Operation
+```objective-c
+//Executes update
+BOOL rs = [HZDBManager executeUpdate:@"update Person set name = ? where id = ?" withParams:@[@"GeniusBrother",@"1"]];
+
+//Executes query
+NSArray *resultDicArray =[HZDBManager executeQuery:@"select * from Person where id = ?" withParams:@[@1]];
+
+//Batch
+[HZDBManager executeStatements:@"update Person set name = 'GeniusBrother' where id = 1;select * from Person where id = 1" withResultBlock:^int(NSDictionary * _Nonnull resultsDictionary) {
+    //do something
+        
+    return SQLITE_OK;
+}];
+
+//Transaction
+[HZDBManager beginTransactionWithBlock:^BOOL(HZDatabaseManager * _Nonnull db) {
+    BOOL rs = [db executeUpdate:@"" withParams:@[]];
+    if (rs) {
+        return YES; //commit
+    }else {
+        return NO;  //rollback
+    }
+}];
+```
