@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
 
   s.name         = "HZORM" 
-  s.version      = "0.1.0"    
+  s.version      = "0.1.1"    
   s.summary      = "HZORM provides a beautiful, simple ActiveRecord implementation to interact with the database."
   s.homepage     = "https://github.com/GeniusBrother/HZORM.git"
   s.license      = "MIT"
